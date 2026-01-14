@@ -102,6 +102,15 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <!-- Tracking Foreground Service -->
+        <service
+            android:name="com.olympusmont.controlmiles.TrackingForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location"
+            android:stopWithTask="false">
+        </service>
+
     </application>
 
 </manifest>
