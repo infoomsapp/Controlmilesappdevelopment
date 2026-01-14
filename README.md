@@ -340,7 +340,7 @@ Auto-configured in `AndroidManifest.xml`:
 ## 📄 License
 
 **Proprietary License**  
-© 2025 Olympus Mont Systems LLC. All rights reserved.
+© 2026 Olympus Mont Systems LLC. All rights reserved.
 
 This software is proprietary and confidential. Unauthorized copying, distribution, or use is strictly prohibited.
 
