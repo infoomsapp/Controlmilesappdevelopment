@@ -1,6 +1,6 @@
 // Settings - App configuration and preferences
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
@@ -17,8 +17,8 @@ interface SettingsProps {
 }
 
 const languageOptions: { code: Language; name: string; nativeName: string }[] = [
-  { code: 'es', name: 'Spanish', nativeName: 'Español' },
   { code: 'en', name: 'English', nativeName: 'English' },
+  { code: 'es', name: 'Spanish', nativeName: 'Español' },
   { code: 'zh', name: 'Chinese', nativeName: '中文' },
   { code: 'am', name: 'Amharic', nativeName: 'አማርኛ' },
   { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
@@ -35,13 +35,13 @@ export function Settings({ onNavigate }: SettingsProps) {
     const updated = { ...settings, standardMileageRate: rate };
     saveSettings(updated);
     setSettings(updated);
-    toast.success('Configuración guardada correctamente');
+    toast.success('Settings saved successfully');
   }
 
   function handleClearData() {
-    if (confirm('¿Estás seguro de que quieres borrar todos los datos? Esta acción no se puede deshacer.')) {
+    if (confirm('Are you sure you want to delete all data? This action cannot be undone.')) {
       localStorage.clear();
-      toast.success('Todos los datos han sido eliminados');
+      toast.success('All data has been deleted');
       setTimeout(() => {
         window.location.reload();
       }, 1000);
@@ -57,23 +57,23 @@ export function Settings({ onNavigate }: SettingsProps) {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">Configuración</h1>
-            <p className="text-gray-600">Preferencias y ajustes del sistema</p>
+            <h1 className="text-3xl font-bold">Settings</h1>
+            <p className="text-gray-600">System preferences and configuration</p>
           </div>
         </div>
 
         {/* Tracking Settings */}
         <Card>
           <CardHeader>
-            <CardTitle>Rastreo GPS</CardTitle>
-            <CardDescription>Configuración del seguimiento de ubicación</CardDescription>
+            <CardTitle>GPS Tracking</CardTitle>
+            <CardDescription>Location tracking configuration</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Auto-iniciar rastreo</Label>
+                <Label>Auto-start tracking</Label>
                 <div className="text-sm text-gray-500">
-                  Iniciar rastreo automáticamente al abrir la app
+                  Automatically start tracking when opening the app
                 </div>
               </div>
               <Switch
@@ -88,9 +88,9 @@ export function Settings({ onNavigate }: SettingsProps) {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Detectar apps gig</Label>
+                <Label>Detect gig apps</Label>
                 <div className="text-sm text-gray-500">
-                  Identificar automáticamente apps como Uber, Lyft, etc.
+                  Automatically identify apps like Uber, Lyft, etc.
                 </div>
               </div>
               <Switch
@@ -106,15 +106,15 @@ export function Settings({ onNavigate }: SettingsProps) {
         {/* Tax Settings */}
         <Card>
           <CardHeader>
-            <CardTitle>Configuración Fiscal</CardTitle>
-            <CardDescription>Ajustes para cálculos de deducción</CardDescription>
+            <CardTitle>Tax Settings</CardTitle>
+            <CardDescription>Deduction calculation settings</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Mostrar estimación fiscal</Label>
+                <Label>Show tax estimation</Label>
                 <div className="text-sm text-gray-500">
-                  Calcular deducción estimada del IRS
+                  Calculate estimated IRS deduction
                 </div>
               </div>
               <Switch
@@ -128,7 +128,7 @@ export function Settings({ onNavigate }: SettingsProps) {
             <Separator />
 
             <div className="space-y-2">
-              <Label htmlFor="mileage-rate">Tasa estándar de millas (IRS)</Label>
+              <Label htmlFor="mileage-rate">IRS Standard Mileage Rate</Label>
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
@@ -141,10 +141,10 @@ export function Settings({ onNavigate }: SettingsProps) {
                     className="pl-6"
                   />
                 </div>
-                <span className="flex items-center text-gray-500">/ milla</span>
+                <span className="flex items-center text-gray-500">/ mile</span>
               </div>
               <p className="text-xs text-gray-500">
-                Tasa estándar del IRS para 2024: $0.67/milla
+                IRS standard rate for 2024: $0.67/mile
               </p>
             </div>
           </CardContent>
@@ -153,15 +153,15 @@ export function Settings({ onNavigate }: SettingsProps) {
         {/* Data & Privacy */}
         <Card>
           <CardHeader>
-            <CardTitle>Datos y Privacidad</CardTitle>
-            <CardDescription>Gestión de información almacenada</CardDescription>
+            <CardTitle>Data & Privacy</CardTitle>
+            <CardDescription>Stored information management</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Backup local</Label>
+                <Label>Local backup</Label>
                 <div className="text-sm text-gray-500">
-                  Mantener copia de seguridad en el navegador
+                  Keep backup copy in browser
                 </div>
               </div>
               <Switch
@@ -175,10 +175,10 @@ export function Settings({ onNavigate }: SettingsProps) {
             <Separator />
 
             <div className="space-y-2">
-              <Label>Almacenamiento local</Label>
+              <Label>Local storage</Label>
               <p className="text-sm text-gray-500">
-                Todos los datos se almacenan localmente en tu dispositivo de forma cifrada.
-                No se envía información a servidores externos.
+                All data is stored locally on your device in encrypted form.
+                No information is sent to external servers.
               </p>
             </div>
           </CardContent>
@@ -187,8 +187,8 @@ export function Settings({ onNavigate }: SettingsProps) {
         {/* Language */}
         <Card>
           <CardHeader>
-            <CardTitle>Idioma</CardTitle>
-            <CardDescription>Preferencia de idioma de la aplicación</CardDescription>
+            <CardTitle>Language</CardTitle>
+            <CardDescription>Application language preference</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -210,26 +210,26 @@ export function Settings({ onNavigate }: SettingsProps) {
         {/* About */}
         <Card>
           <CardHeader>
-            <CardTitle>Acerca de ControlMiles</CardTitle>
-            <CardDescription>Información de la aplicación</CardDescription>
+            <CardTitle>About ControlMiles</CardTitle>
+            <CardDescription>Application information</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-600">Versión:</span>
+              <span className="text-gray-600">Version:</span>
               <span className="font-medium">1.0.0</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Base de datos:</span>
+              <span className="text-gray-600">Database:</span>
               <span className="font-medium">LocalStorage</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Cifrado:</span>
+              <span className="text-gray-600">Encryption:</span>
               <span className="font-medium">SHA-256</span>
             </div>
             <Separator className="my-4" />
             <p className="text-xs text-gray-500">
-              ControlMiles es una aplicación offline-first diseñada para conductores gig.
-              Todos los datos se cifran criptográficamente y son audit-ready para el IRS.
+              ControlMiles is an offline-first application designed for gig drivers.
+              All data is cryptographically encrypted and audit-ready for the IRS.
             </p>
           </CardContent>
         </Card>
@@ -237,14 +237,14 @@ export function Settings({ onNavigate }: SettingsProps) {
         {/* Save Button */}
         <Button className="w-full" size="lg" onClick={handleSave}>
           <Save className="mr-2 h-5 w-5" />
-          Guardar Configuración
+          Save Settings
         </Button>
 
         {/* Danger Zone */}
         <Card className="border-red-200">
           <CardHeader>
-            <CardTitle className="text-red-600">Zona de Peligro</CardTitle>
-            <CardDescription>Acciones irreversibles</CardDescription>
+            <CardTitle className="text-red-600">Danger Zone</CardTitle>
+            <CardDescription>Irreversible actions</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <Button
@@ -253,10 +253,10 @@ export function Settings({ onNavigate }: SettingsProps) {
               onClick={handleClearData}
             >
               <Trash2 className="mr-2 h-4 w-4" />
-              Eliminar Todos los Datos
+              Delete All Data
             </Button>
             <p className="text-xs text-gray-500">
-              Esta acción eliminará permanentemente todos los registros, fotos y configuraciones.
+              This action will permanently delete all records, photos, and settings.
             </p>
           </CardContent>
         </Card>

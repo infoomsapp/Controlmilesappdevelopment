@@ -10,8 +10,10 @@ import { Photos } from '@/app/components/Photos';
 import { Earnings } from '@/app/components/Earnings';
 import { Export } from '@/app/components/Export';
 import { Settings } from '@/app/components/Settings';
+import { VehicleManagement } from '@/app/components/VehicleManagement';
+import { AutoDetectionSettings } from '@/app/components/AutoDetectionSettings';
 import { Button } from '@/app/components/ui/button';
-import { Menu, Settings as SettingsIcon, LogOut } from 'lucide-react';
+import { Menu, Settings as SettingsIcon, LogOut, Car, Zap, ArrowLeft } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -21,7 +23,6 @@ import {
   SheetTrigger,
 } from '@/app/components/ui/sheet';
 import { DailyLedger } from '@/app/types';
-import { generateMockData } from '@/app/services/mockData';
 import { isLoggedIn, logout, getCurrentUser } from '@/app/services/auth';
 import { toast } from 'sonner';
 
@@ -32,7 +33,9 @@ type Screen =
   | 'photos'
   | 'earnings'
   | 'export'
-  | 'settings';
+  | 'settings'
+  | 'vehicles'
+  | 'autoDetection';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -42,16 +45,10 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check authentication and initialize
+    // Check authentication
     async function init() {
       const loggedIn = isLoggedIn();
       setIsAuthenticated(loggedIn);
-      
-      if (loggedIn) {
-        // Initialize mock data only if logged in
-        await generateMockData();
-      }
-      
       setIsLoading(false);
     }
     init();
@@ -59,12 +56,9 @@ export default function App() {
 
   const handleLogin = async () => {
     setIsAuthenticated(true);
-    setIsLoading(true);
-    await generateMockData();
-    setIsLoading(false);
     const user = getCurrentUser();
     if (user) {
-      toast.success(`¡Bienvenido, ${user.username}!`);
+      toast.success(`Welcome, ${user.username}!`);
     }
   };
 
@@ -72,7 +66,7 @@ export default function App() {
     logout();
     setIsAuthenticated(false);
     setCurrentScreen('dashboard');
-    toast.success('Sesión cerrada correctamente');
+    toast.success('Logged out successfully');
   };
 
   const navigate = (screen: Screen, data?: any) => {
@@ -86,7 +80,7 @@ export default function App() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-2xl font-bold mb-2">ControlMiles</div>
-          <div className="text-gray-600">Cargando...</div>
+          <div className="text-gray-600">Loading...</div>
         </div>
       </div>
     );
@@ -121,6 +115,10 @@ export default function App() {
         return <Export {...props} />;
       case 'settings':
         return <Settings {...props} />;
+      case 'vehicles':
+        return <VehicleManagement {...props} />;
+      case 'autoDetection':
+        return <AutoDetectionSettings {...props} />;
       default:
         return <Dashboard {...props} />;
     }
@@ -128,6 +126,20 @@ export default function App() {
 
   return (
     <div className="relative">
+      {/* Back Button - Show on all screens except Dashboard */}
+      {currentScreen !== 'dashboard' && (
+        <div className="fixed top-4 left-4 z-50">
+          <Button 
+            size="icon" 
+            variant="outline" 
+            className="shadow-lg"
+            onClick={() => navigate('dashboard')}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        </div>
+      )}
+
       {/* Navigation Menu - Only show on Dashboard */}
       {currentScreen === 'dashboard' && (
         <div className="fixed top-4 right-4 z-50">
@@ -140,7 +152,7 @@ export default function App() {
             <SheetContent>
               <SheetHeader>
                 <SheetTitle>ControlMiles</SheetTitle>
-                <SheetDescription>Menú de navegación</SheetDescription>
+                <SheetDescription>Navigation Menu</SheetDescription>
               </SheetHeader>
               
               {/* User Info */}
@@ -169,21 +181,21 @@ export default function App() {
                   className="w-full justify-start"
                   onClick={() => navigate('ledger')}
                 >
-                  Historial
+                  History
                 </Button>
                 <Button
                   variant="ghost"
                   className="w-full justify-start"
                   onClick={() => navigate('earnings')}
                 >
-                  Ganancias
+                  Earnings
                 </Button>
                 <Button
                   variant="ghost"
                   className="w-full justify-start"
                   onClick={() => navigate('export')}
                 >
-                  Exportar
+                  Export
                 </Button>
                 <div className="pt-4 border-t">
                   <Button
@@ -192,7 +204,27 @@ export default function App() {
                     onClick={() => navigate('settings')}
                   >
                     <SettingsIcon className="mr-2 h-4 w-4" />
-                    Configuración
+                    Settings
+                  </Button>
+                </div>
+                <div className="pt-4 border-t">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start"
+                    onClick={() => navigate('vehicles')}
+                  >
+                    <Car className="mr-2 h-4 w-4" />
+                    Vehicles
+                  </Button>
+                </div>
+                <div className="pt-4 border-t">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start"
+                    onClick={() => navigate('autoDetection')}
+                  >
+                    <Zap className="mr-2 h-4 w-4" />
+                    Auto Detection
                   </Button>
                 </div>
                 <div className="pt-4 border-t">
@@ -202,7 +234,7 @@ export default function App() {
                     onClick={handleLogout}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    Cerrar sesión
+                    Log Out
                   </Button>
                 </div>
               </div>

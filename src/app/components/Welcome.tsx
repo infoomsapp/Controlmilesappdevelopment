@@ -58,10 +58,10 @@ export function Welcome({ onLogin }: WelcomeProps) {
     const result = await login(loginEmail, loginPassword);
     
     if (result.success) {
-      toast.success('¡Bienvenido a ControlMiles!');
+      toast.success('Welcome to ControlMiles!');
       onLogin();
     } else {
-      toast.error(result.error || 'Error al iniciar sesión');
+      toast.error(result.error || 'Login error');
     }
 
     setLoading(false);
@@ -71,7 +71,7 @@ export function Welcome({ onLogin }: WelcomeProps) {
     e.preventDefault();
     
     if (registerPassword !== registerConfirmPassword) {
-      toast.error('Las contraseñas no coinciden');
+      toast.error('Passwords do not match');
       return;
     }
 
@@ -80,10 +80,10 @@ export function Welcome({ onLogin }: WelcomeProps) {
     const result = await createAccount(registerEmail, registerUsername, registerPassword);
     
     if (result.success) {
-      toast.success('¡Cuenta creada exitosamente!');
+      toast.success('Account created successfully!');
       onLogin();
     } else {
-      toast.error(result.error || 'Error al crear la cuenta');
+      toast.error(result.error || 'Error creating account');
     }
 
     setLoading(false);
@@ -96,28 +96,32 @@ export function Welcome({ onLogin }: WelcomeProps) {
     const result = recoverUsername(forgotUsernameEmail);
     
     if (result.success) {
-      toast.success(`Tu nombre de usuario es: ${result.username}`);
+      toast.success(`Your username is: ${result.username}`);
       setTimeout(() => setScreen('login'), 2000);
     } else {
-      toast.error(result.error || 'Error al recuperar usuario');
+      toast.error(result.error || 'Email not found');
     }
 
     setLoading(false);
   }
 
-  async function handleRequestPasswordReset(e: React.FormEvent) {
+  async function handleForgotPassword(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
 
-    const result = await requestPasswordReset(forgotPasswordEmail);
+    const result = requestPasswordReset(forgotPasswordEmail);
     
     if (result.success) {
-      toast.success(`Código de recuperación: ${result.resetCode}`, { duration: 10000 });
-      setResetCode('');
+      const provider = getEmailProviderInfo(forgotPasswordEmail);
+      toast.success(
+        <div>
+          <p className="font-medium">Recovery code sent!</p>
+          <p className="text-sm">Check your {provider.name} inbox</p>
+        </div>
+      );
       setShowResetCode(true);
-      setScreen('reset-password');
     } else {
-      toast.error(result.error || 'Error al solicitar recuperación');
+      toast.error(result.error || 'Email not found');
     }
 
     setLoading(false);
@@ -127,310 +131,278 @@ export function Welcome({ onLogin }: WelcomeProps) {
     e.preventDefault();
     
     if (newPassword !== confirmNewPassword) {
-      toast.error('Las contraseñas no coinciden');
+      toast.error('Passwords do not match');
       return;
     }
 
     setLoading(true);
 
-    const result = await resetPassword(resetCode, newPassword);
+    const result = resetPassword(forgotPasswordEmail, resetCode, newPassword);
     
     if (result.success) {
-      toast.success('Contraseña restablecida exitosamente');
-      setScreen('login');
-      setResetCode('');
-      setNewPassword('');
-      setConfirmNewPassword('');
-      setShowResetCode(false);
+      toast.success('Password reset successfully!');
+      setTimeout(() => setScreen('login'), 2000);
     } else {
-      toast.error(result.error || 'Error al restablecer contraseña');
+      toast.error(result.error || 'Invalid code');
     }
 
     setLoading(false);
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-lg mb-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-4">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <div className="flex items-center justify-center gap-2 mb-2">
             <Car className="h-10 w-10 text-blue-600" />
+            <h1 className="text-4xl font-bold text-gray-900">ControlMiles</h1>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">ControlMiles</h1>
-          <p className="text-blue-100">Tu compañero de confianza para el registro de millas</p>
+          <p className="text-gray-600 text-lg">
+            Your trusted companion for mileage tracking
+          </p>
+          <p className="text-sm text-gray-500 italic">
+            A Software by Olympus Mont Systems LLC
+          </p>
         </div>
 
-        <Card className="shadow-2xl">
-          {/* Login Screen */}
-          {screen === 'login' && (
-            <>
-              <CardHeader>
-                <CardTitle>Iniciar Sesión</CardTitle>
-                <CardDescription>Ingresa a tu cuenta de ControlMiles</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="login-email">Email o Usuario</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="login-email"
-                        type="text"
-                        placeholder="correo@ejemplo.com"
-                        value={loginEmail}
-                        onChange={(e) => setLoginEmail(e.target.value)}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                    {loginEmail.includes('@') && (
-                      <p className={`text-xs ${getEmailProviderInfo(loginEmail).color}`}>
-                        {getEmailProviderInfo(loginEmail).name}
-                      </p>
-                    )}
-                  </div>
+        {/* Login Screen */}
+        {screen === 'login' && (
+          <Card className="shadow-xl">
+            <CardHeader>
+              <CardTitle className="text-2xl">Sign In</CardTitle>
+              <CardDescription>Sign in to your ControlMiles account</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="login-email">
+                    <Mail className="inline h-4 w-4 mr-1" />
+                    Email
+                  </Label>
+                  <Input
+                    id="login-email"
+                    type="text"
+                    placeholder="email@example.com"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    required
+                  />
+                </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="login-password">Contraseña</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="login-password"
-                        type="password"
-                        placeholder="••••••••"
-                        value={loginPassword}
-                        onChange={(e) => setLoginPassword(e.target.value)}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="login-password">
+                    <Lock className="inline h-4 w-4 mr-1" />
+                    Password
+                  </Label>
+                  <Input
+                    id="login-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    required
+                  />
+                </div>
 
-                  <div className="flex gap-2 text-sm">
-                    <button
-                      type="button"
-                      onClick={() => setScreen('forgot-username')}
-                      className="text-blue-600 hover:underline"
-                    >
-                      ¿Olvidaste tu usuario?
-                    </button>
-                    <span className="text-gray-400">•</span>
-                    <button
-                      type="button"
-                      onClick={() => setScreen('forgot-password')}
-                      className="text-blue-600 hover:underline"
-                    >
-                      ¿Olvidaste tu contraseña?
-                    </button>
-                  </div>
-
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-                  </Button>
-
-                  <Separator />
-
-                  <Button
+                <div className="flex items-center justify-between text-sm">
+                  <button
                     type="button"
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => setScreen('register')}
+                    onClick={() => setScreen('forgot-username')}
+                    className="text-blue-600 hover:underline"
                   >
-                    Crear Nueva Cuenta
-                  </Button>
-                </form>
-              </CardContent>
-            </>
-          )}
-
-          {/* Register Screen */}
-          {screen === 'register' && (
-            <>
-              <CardHeader>
-                <CardTitle>Crear Cuenta</CardTitle>
-                <CardDescription>Regístrate para usar ControlMiles</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleRegister} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="register-email">Email</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="register-email"
-                        type="email"
-                        placeholder="correo@ejemplo.com"
-                        value={registerEmail}
-                        onChange={(e) => setRegisterEmail(e.target.value)}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                    {registerEmail.includes('@') && (
-                      <div className="flex items-center gap-2">
-                        <p className={`text-xs ${getEmailProviderInfo(registerEmail).color}`}>
-                          {getEmailProviderInfo(registerEmail).name}
-                        </p>
-                        <span className="text-xs text-green-600 flex items-center gap-1">
-                          <Shield className="h-3 w-3" />
-                          Compatible
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="register-username">Nombre de Usuario</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="register-username"
-                        type="text"
-                        placeholder="usuario123"
-                        value={registerUsername}
-                        onChange={(e) => setRegisterUsername(e.target.value)}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="register-password">Contraseña</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="register-password"
-                        type="password"
-                        placeholder="Mínimo 8 caracteres"
-                        value={registerPassword}
-                        onChange={(e) => setRegisterPassword(e.target.value)}
-                        className="pl-10"
-                        required
-                        minLength={8}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="register-confirm-password">Confirmar Contraseña</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="register-confirm-password"
-                        type="password"
-                        placeholder="Repite tu contraseña"
-                        value={registerConfirmPassword}
-                        onChange={(e) => setRegisterConfirmPassword(e.target.value)}
-                        className="pl-10"
-                        required
-                        minLength={8}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex gap-2">
-                    <Shield className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-blue-800">
-                      Tus datos se almacenan de forma segura y cifrada localmente en tu dispositivo.
-                    </p>
-                  </div>
-
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
-                  </Button>
-
-                  <Button
+                    Forgot your username?
+                  </button>
+                  <span className="text-gray-400">•</span>
+                  <button
                     type="button"
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => setScreen('login')}
+                    onClick={() => setScreen('forgot-password')}
+                    className="text-blue-600 hover:underline"
                   >
-                    Volver al Inicio de Sesión
-                  </Button>
-                </form>
-              </CardContent>
-            </>
-          )}
+                    Forgot your password?
+                  </button>
+                </div>
 
-          {/* Forgot Username Screen */}
-          {screen === 'forgot-username' && (
-            <>
-              <CardHeader>
-                <CardTitle>Recuperar Usuario</CardTitle>
-                <CardDescription>Ingresa tu email para recuperar tu nombre de usuario</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleForgotUsername} className="space-y-4">
+                <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                  {loading ? 'Signing in...' : 'Sign In'}
+                </Button>
+
+                <Separator className="my-4" />
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setScreen('register')}
+                >
+                  Create New Account
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Register Screen */}
+        {screen === 'register' && (
+          <Card className="shadow-xl">
+            <CardHeader>
+              <CardTitle className="text-2xl">Create Account</CardTitle>
+              <CardDescription>Join ControlMiles today</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="register-email">
+                    <Mail className="inline h-4 w-4 mr-1" />
+                    Email
+                  </Label>
+                  <Input
+                    id="register-email"
+                    type="email"
+                    placeholder="email@example.com"
+                    value={registerEmail}
+                    onChange={(e) => setRegisterEmail(e.target.value)}
+                    required
+                  />
+                  <p className="text-xs text-gray-500">
+                    Used for account recovery and notifications
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="register-username">
+                    <User className="inline h-4 w-4 mr-1" />
+                    Username
+                  </Label>
+                  <Input
+                    id="register-username"
+                    type="text"
+                    placeholder="username123"
+                    value={registerUsername}
+                    onChange={(e) => setRegisterUsername(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="register-password">
+                    <Lock className="inline h-4 w-4 mr-1" />
+                    Password
+                  </Label>
+                  <Input
+                    id="register-password"
+                    type="password"
+                    placeholder="Minimum 8 characters"
+                    value={registerPassword}
+                    onChange={(e) => setRegisterPassword(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="register-confirm-password">
+                    <Lock className="inline h-4 w-4 mr-1" />
+                    Confirm Password
+                  </Label>
+                  <Input
+                    id="register-confirm-password"
+                    type="password"
+                    placeholder="Repeat your password"
+                    value={registerConfirmPassword}
+                    onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                  {loading ? 'Creating account...' : 'Create Account'}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setScreen('login')}
+                >
+                  Already have an account? Sign In
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Forgot Username Screen */}
+        {screen === 'forgot-username' && (
+          <Card className="shadow-xl">
+            <CardHeader>
+              <CardTitle className="text-2xl">Recover Username</CardTitle>
+              <CardDescription>Enter your email to recover your username</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleForgotUsername} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="forgot-username-email">
+                    <Mail className="inline h-4 w-4 mr-1" />
+                    Email
+                  </Label>
+                  <Input
+                    id="forgot-username-email"
+                    type="email"
+                    placeholder="email@example.com"
+                    value={forgotUsernameEmail}
+                    onChange={(e) => setForgotUsernameEmail(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                  {loading ? 'Searching...' : 'Recover Username'}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setScreen('login')}
+                >
+                  Back to Sign In
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Forgot Password Screen */}
+        {screen === 'forgot-password' && (
+          <Card className="shadow-xl">
+            <CardHeader>
+              <CardTitle className="text-2xl">Reset Password</CardTitle>
+              <CardDescription>
+                {!showResetCode 
+                  ? 'Enter your email to receive a recovery code' 
+                  : 'Enter the code sent to your email'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {!showResetCode ? (
+                <form onSubmit={handleForgotPassword} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="forgot-username-email">Email</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="forgot-username-email"
-                        type="email"
-                        placeholder="correo@ejemplo.com"
-                        value={forgotUsernameEmail}
-                        onChange={(e) => setForgotUsernameEmail(e.target.value)}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
+                    <Label htmlFor="forgot-password-email">
+                      <Mail className="inline h-4 w-4 mr-1" />
+                      Email
+                    </Label>
+                    <Input
+                      id="forgot-password-email"
+                      type="text"
+                      placeholder="email@example.com"
+                      value={forgotPasswordEmail}
+                      onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                      required
+                    />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Recuperando...' : 'Recuperar Usuario'}
-                  </Button>
-
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => setScreen('login')}
-                  >
-                    Volver
-                  </Button>
-                </form>
-              </CardContent>
-            </>
-          )}
-
-          {/* Forgot Password Screen */}
-          {screen === 'forgot-password' && (
-            <>
-              <CardHeader>
-                <CardTitle>Recuperar Contraseña</CardTitle>
-                <CardDescription>Ingresa tu email o usuario para recuperar tu contraseña</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleRequestPasswordReset} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="forgot-password-email">Email o Usuario</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="forgot-password-email"
-                        type="text"
-                        placeholder="correo@ejemplo.com"
-                        value={forgotPasswordEmail}
-                        onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex gap-2">
-                    <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-yellow-800">
-                      Recibirás un código de recuperación que deberás usar para restablecer tu contraseña.
-                    </p>
-                  </div>
-
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Enviando...' : 'Solicitar Código'}
+                  <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                    {loading ? 'Sending code...' : 'Send Recovery Code'}
                   </Button>
 
                   <Button
@@ -439,91 +411,91 @@ export function Welcome({ onLogin }: WelcomeProps) {
                     className="w-full"
                     onClick={() => setScreen('login')}
                   >
-                    Volver
+                    Back to Sign In
                   </Button>
                 </form>
-              </CardContent>
-            </>
-          )}
-
-          {/* Reset Password Screen */}
-          {screen === 'reset-password' && (
-            <>
-              <CardHeader>
-                <CardTitle>Restablecer Contraseña</CardTitle>
-                <CardDescription>Ingresa el código de recuperación y tu nueva contraseña</CardDescription>
-              </CardHeader>
-              <CardContent>
+              ) : (
                 <form onSubmit={handleResetPassword} className="space-y-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
+                    <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-blue-900">
+                      <p className="font-medium">Code sent to your email</p>
+                      <p>Check your {getEmailProviderInfo(forgotPasswordEmail).name} inbox</p>
+                    </div>
+                  </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="reset-code">Código de Recuperación</Label>
+                    <Label htmlFor="reset-code">Recovery Code</Label>
                     <Input
                       id="reset-code"
                       type="text"
                       placeholder="XXXXXXXX"
                       value={resetCode}
                       onChange={(e) => setResetCode(e.target.value.toUpperCase())}
+                      maxLength={8}
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="new-password">Nueva Contraseña</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="new-password"
-                        type="password"
-                        placeholder="Mínimo 8 caracteres"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        className="pl-10"
-                        required
-                        minLength={8}
-                      />
-                    </div>
+                    <Label htmlFor="new-password">
+                      <Lock className="inline h-4 w-4 mr-1" />
+                      New Password
+                    </Label>
+                    <Input
+                      id="new-password"
+                      type="password"
+                      placeholder="Minimum 8 characters"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                    />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="confirm-new-password">Confirmar Nueva Contraseña</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="confirm-new-password"
-                        type="password"
-                        placeholder="Repite tu nueva contraseña"
-                        value={confirmNewPassword}
-                        onChange={(e) => setConfirmNewPassword(e.target.value)}
-                        className="pl-10"
-                        required
-                        minLength={8}
-                      />
-                    </div>
+                    <Label htmlFor="confirm-new-password">
+                      <Lock className="inline h-4 w-4 mr-1" />
+                      Confirm New Password
+                    </Label>
+                    <Input
+                      id="confirm-new-password"
+                      type="password"
+                      placeholder="Repeat your new password"
+                      value={confirmNewPassword}
+                      onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      required
+                    />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Restableciendo...' : 'Restablecer Contraseña'}
+                  <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                    {loading ? 'Resetting password...' : 'Reset Password'}
                   </Button>
 
                   <Button
                     type="button"
                     variant="outline"
                     className="w-full"
-                    onClick={() => setScreen('login')}
+                    onClick={() => {
+                      setShowResetCode(false);
+                      setScreen('login');
+                    }}
                   >
-                    Volver
+                    Back to Sign In
                   </Button>
                 </form>
-              </CardContent>
-            </>
-          )}
-        </Card>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Footer */}
-        <div className="text-center mt-6 text-white text-sm">
-          <p className="flex items-center justify-center gap-1">
+        <div className="text-center space-y-2">
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
             <Shield className="h-4 w-4" />
-            Offline-first • Cifrado SHA-256 • IRS Audit-Ready
+            <span>Offline-first • SHA-256 Encrypted • IRS Audit-Ready</span>
+          </div>
+          <p className="text-xs text-gray-500">
+            All data is stored locally on your device. No information is sent to external servers.
           </p>
         </div>
       </div>

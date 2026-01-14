@@ -11,7 +11,7 @@ const DEFAULT_SETTINGS: Settings = {
   autoStartTracking: false,
   detectGigApps: true,
   taxEstimation: true,
-  language: 'es',
+  language: 'en', // Default to English
   backupEnabled: true,
   standardMileageRate: 0.67, // IRS 2024 rate
 };

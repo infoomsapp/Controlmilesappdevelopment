@@ -1,233 +1,374 @@
-# 🚗 ControlMiles - Mileage & Income Tracker for Gig Drivers
+# ControlMiles - Professional Mileage Tracking
 
-> Offline-first, encrypted, and IRS audit-ready mileage tracking application for gig economy drivers.
+**A Software by Olympus Mont Systems LLC**
 
-## 🌟 Features
+<div align="center">
 
-### ✅ **Core Functionality**
-- 📍 **Real-time GPS Tracking** - Track your driving miles automatically
-- 📸 **Odometer Photo Evidence** - Camera-only capture (no file upload) for IRS compliance
-- 💰 **Income Tracking** - Log earnings and calculate deductions
-- 🔒 **Immutable Records** - Protected mileage with auditable correction system
-- 📊 **IRS-Ready Reports** - Export to PDF, CSV, and JSON
-- 🌐 **Offline-First** - Works without internet connection
-- 🔐 **Encrypted Data** - SHA-256 hashing for data integrity
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20Web-green)
+![License](https://img.shields.io/badge/license-Proprietary-red)
 
-### 🚀 **Gig App Support**
-- 🚗 **Uber**
-- 🚙 **Lyft** 
-- 🍔 **DoorDash**
-- 🍕 **UberEats**
-- 🥡 **Grubhub**
-- 🛒 **Instacart**
-- 📦 **Postmates**
-- 💪 **Empower**
-- 📦 **Amazon Flex**
-- 🚕 **Taxi** (with app detection)
-- 🚶‍♂️ **Personal Commute** (for employees using personal vehicle)
-
-### 🌍 **7 Languages Supported**
-- 🇺🇸 English (Default)
-- 🇪🇸 Español
-- 🇨🇳 中文 (Chinese)
-- 🇪🇹 አማርኛ (Amharic/Ethiopian)
-- 🇸🇦 العربية (Arabic)
-- 🇫🇷 Français
-- 🇧🇷 Português
-
-### 🔐 **Required Permissions**
-- 📍 **Location/GPS** - Track mileage automatically
-- 💪 **Physical Activity & Motion** - Detect when driving
-- 📷 **Camera** - Capture odometer photos for IRS evidence
-
-## 🚀 Quick Start
-
-### Installation
-
-```bash
-# Install dependencies
-npm install
-
-# Run in development mode
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
-```
-
-### First Time Setup
-
-1. **Open the app** - Navigate to `http://localhost:5173`
-2. **Grant permissions** - Allow location, camera, and motion access
-3. **Select language** - Choose from 7 available languages (top-right corner)
-4. **Capture odometer photo** - Take a photo of your starting odometer reading
-5. **Select gig app** - Choose which app you're working with
-6. **Start tracking** - Begin GPS tracking for your shift
-
-## 📱 Workflow
-
-### Daily Routine:
-
-1. **Morning:**
-   - Open ControlMiles
-   - Capture starting odometer photo
-   - Select active gig app (Uber, DoorDash, etc.)
-   - Start GPS tracking
-
-2. **During Shift:**
-   - App runs in background
-   - Automatically logs GPS coordinates
-   - Calculates miles in real-time
-
-3. **End of Shift:**
-   - Stop tracking
-   - Log daily income
-   - Review mileage and deductions
-
-4. **Weekly/Monthly:**
-   - View history in Ledger
-   - Export reports for tax season
-   - Apply corrections if needed (with documentation)
-
-## 🔧 Mileage Correction System
-
-### How It Works:
-
-- ✅ **Original miles are IMMUTABLE** - Never directly edited
-- ✅ **Apply corrections separately** - Adjustment system with mandatory reason
-- ✅ **Complete audit trail** - Every correction is logged with timestamp
-- ✅ **IRS-compliant** - Transparent documentation for audits
-
-### Applying a Correction:
-
-1. Click "Apply Correction" button
-2. Enter adjustment value (+/- miles)
-3. Provide detailed reason (min. 10 characters)
-4. System logs:
-   - Original miles
-   - Adjustment amount
-   - Reason
-   - Timestamp
-   - Previous/new values
-
-**Example:**
-```
-Original Miles: 52.3 (PROTECTED)
-Correction: +3.2 miles
-Reason: "GPS error in Lincoln Tunnel. Route verified via Google Maps Timeline."
-Final Miles: 55.5
-```
-
-## 🌐 Deployment (For Testing with Real Drivers)
-
-See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for complete deployment guide.
-
-### Recommended: Netlify (Easiest)
-
-```bash
-# Install Netlify CLI
-npm install -g netlify-cli
-
-# Build and deploy
-npm run build
-netlify deploy --prod --dir=dist
-```
-
-Your app will be live at: `https://controlmiles.netlify.app`
-
-### Other Options:
-- **Vercel** - Best performance
-- **GitHub Pages** - 100% free
-- **Firebase Hosting** - Google infrastructure
-
-## 📱 Install as PWA (Progressive Web App)
-
-### iOS (Safari):
-1. Open app URL in Safari
-2. Tap Share button
-3. "Add to Home Screen"
-4. App works offline!
-
-### Android (Chrome):
-1. Open app URL in Chrome
-2. Tap menu (three dots)
-3. "Add to Home screen"
-4. App installs like native app!
-
-## 🔒 Privacy & Security
-
-### Data Storage:
-- ✅ **100% Local** - All data stored in browser localStorage
-- ✅ **No Server** - No data sent to external servers
-- ✅ **Encrypted** - SHA-256 hashing for integrity
-- ✅ **Private** - Your data stays on your device
-
-### Important:
-- Not designed for collecting PII (Personally Identifiable Information)
-- Not for securing highly sensitive data
-- Designed for IRS tax compliance only
-
-## 📊 Export & Reports
-
-### Available Formats:
-- **PDF** - Professional IRS-ready reports
-- **CSV** - Import into Excel/Google Sheets
-- **JSON** - Complete data backup
-
-### What's Included:
-- Daily mileage logs
-- GPS coordinates & timestamps
-- Income records
-- Odometer photos
-- Correction history
-- SHA-256 integrity hashes
-
-## 🧪 Testing Checklist
-
-Before deploying to drivers:
-
-- [ ] Test GPS tracking accuracy
-- [ ] Verify camera capture works
-- [ ] Test offline functionality
-- [ ] Check permission requests (iOS & Android)
-- [ ] Test all gig app selections
-- [ ] Verify correction system
-- [ ] Test language switching
-- [ ] Export reports in all formats
-- [ ] Test on multiple devices
-- [ ] Verify PWA installation
-
-## 🛠️ Tech Stack
-
-- **Framework:** React 18 + TypeScript
-- **Build Tool:** Vite
-- **Styling:** Tailwind CSS v4
-- **UI Components:** shadcn/ui
-- **Storage:** localStorage (IndexedDB planned)
-- **Geolocation:** Navigator API
-- **Camera:** MediaDevices API
-- **Encryption:** Web Crypto API (SHA-256)
-
-## 📄 License
-
-MIT License - Feel free to use and modify for your needs.
-
-## 🤝 Contributing
-
-Contributions welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Submit a pull request
-
-## 📞 Support
-
-For issues or questions:
-- Create an issue on GitHub
-- Check the [DEPLOYMENT.md](./DEPLOYMENT.md) guide
+</div>
 
 ---
 
-**Built for gig drivers, by developers who care about your tax compliance** 🚗💼
+## 🚗 Overview
+
+**ControlMiles** is a professional, offline-first, encrypted mileage tracking application designed specifically for gig economy drivers. Built with compliance, security, and ease of use in mind, it provides comprehensive tracking with IRS audit-ready reports.
+
+### Key Features
+
+- ✅ **Offline-First Architecture** - Works without internet connection
+- 🔒 **SHA-256 Encryption** - Secure data integrity
+- 📊 **IRS Audit-Ready** - Compliant export formats
+- 🚙 **Multi-Vehicle Support** - Track different cars independently
+- 🤖 **Automatic Detection** - Motion + GPS trip detection
+- 📱 **Bluetooth Integration** - Auto-start with car connection
+- 📸 **Photo Evidence** - Odometer and trip documentation
+- 💰 **Earnings Tracking** - Income per platform
+- 🔄 **Immutable Corrections** - Full audit trail
+
+---
+
+## 🎯 New Features
+
+### 1. **Vehicle Management**
+- Add multiple vehicles
+- Track mileage per vehicle
+- Vehicle-specific odometer readings
+- Switch between vehicles seamlessly
+- Vehicle details (Make, Model, Year, VIN, License Plate)
+
+### 2. **Automatic Trip Detection**
+- **Motion Sensor Integration** - Detects driving movement
+- **GPS Speed Monitoring** - Tracks vehicle speed
+- **Smart Stop Detection** - Distinguishes between traffic lights and trip end
+- **Configurable Sensitivity** - Low, Medium, High settings
+- **Automatic Mode** - No gig app selection required
+
+### 3. **Bluetooth Vehicle Detection**
+- **Auto-Start on Connect** - Trip starts when connected to car Bluetooth
+- **Auto-Stop on Disconnect** - Trip ends when Bluetooth disconnects
+- **Device Pairing** - Link Bluetooth devices to specific vehicles
+- **Background Monitoring** - Works even when app is closed
+
+### 4. **Stop & Traffic Detection**
+- Differentiates between temporary stops (traffic lights) and trip end
+- Configurable stop time threshold (1-15 minutes)
+- Smart acceleration detection
+- Prevents false trip endings in traffic
+
+---
+
+## 🏗️ Architecture
+
+### Technology Stack
+
+- **Frontend**: React 18 + TypeScript
+- **Build Tool**: Vite 6
+- **UI Framework**: Tailwind CSS v4 + Radix UI
+- **Mobile**: Capacitor 8
+- **State**: localStorage (offline-first)
+- **Security**: SHA-256 hashing
+
+### Project Structure
+
+```
+controlmiles/
+├── src/
+│   └── app/
+│       ├── components/
+│       │   ├── Dashboard.tsx
+│       │   ├── VehicleManagement.tsx      # NEW
+│       │   ├── AutoDetectionSettings.tsx  # NEW
+│       │   ├── Ledger.tsx
+│       │   ├── Photos.tsx
+│       │   ├── Earnings.tsx
+│       │   ├── Export.tsx
+│       │   └── Settings.tsx
+│       ├── services/
+│       │   ├── tracking.ts
+│       │   ├── vehicleService.ts          # NEW
+│       │   ├── autoDetection.ts           # NEW
+│       │   ├── bluetoothDetection.ts      # NEW
+│       │   ├── auth.ts
+│       │   └── corrections.ts
+│       └── types/
+│           ├── index.ts
+│           └── vehicle.ts                 # NEW
+├── android/                               # Android Studio project
+├── capacitor.config.ts                    # Capacitor configuration
+└── package.json
+```
+
+---
+
+## 🚀 Quick Start
+
+### For Android Studio Development
+
+#### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+#### 2. Build Web App
+
+```bash
+npm run build
+```
+
+#### 3. Initialize Capacitor (First Time Only)
+
+```bash
+npm run cap:init
+```
+
+#### 4. Add Android Platform (First Time Only)
+
+```bash
+npm run cap:add:android
+```
+
+#### 5. Open in Android Studio
+
+```bash
+npm run cap:open:android
+```
+
+Or use the shortcut:
+
+```bash
+npm run android
+```
+
+### Development Workflow
+
+#### Make Changes → Build → Sync → Run
+
+```bash
+# 1. Make your changes to React components
+# 2. Build and sync to Android
+npm run cap:sync:android
+
+# 3. Android Studio will detect changes automatically
+```
+
+---
+
+## 📱 Android Studio Setup
+
+### Prerequisites
+
+- **Android Studio** (Latest version recommended)
+- **Java JDK 17+**
+- **Android SDK** (API 33 or higher)
+- **Node.js 18+**
+
+### First-Time Setup
+
+1. **Open Project**
+   ```bash
+   npm run cap:open:android
+   ```
+
+2. **Wait for Gradle Sync** (5-10 minutes first time)
+
+3. **Select Device/Emulator**
+   - Physical device via USB debugging
+   - Android Virtual Device (AVD)
+
+4. **Run App**
+   - Click the green "Play" button
+   - App will install and launch automatically
+
+### Building APK for Production
+
+1. In Android Studio: **Build → Generate Signed Bundle/APK**
+2. Select **APK**
+3. Create/use keystore (save securely!)
+4. Choose **release** variant
+5. Find APK in: `android/app/build/outputs/apk/release/`
+
+---
+
+## 🔧 Configuration
+
+### Capacitor Configuration
+
+File: `/capacitor.config.ts`
+
+```typescript
+{
+  appId: 'com.olympusmont.controlmiles',
+  appName: 'ControlMiles',
+  webDir: 'dist',
+  plugins: {
+    Geolocation: { permissions: ['location', 'coarseLocation'] },
+    Camera: { permissions: ['camera', 'photos'] },
+    LocalNotifications: { iconColor: '#3B82F6' },
+  }
+}
+```
+
+### Android Permissions
+
+Auto-configured in `AndroidManifest.xml`:
+
+- **GPS**: Background location tracking
+- **Camera**: Odometer photos
+- **Motion**: Activity detection
+- **Bluetooth**: Car connection detection
+- **Notifications**: Trip alerts
+- **Storage**: Photo storage
+
+---
+
+## 📖 Feature Documentation
+
+### Vehicle Management
+
+**Location**: Settings → Vehicles
+
+- **Add Vehicle**: Click "Add Vehicle" button
+- **Edit Vehicle**: Click edit icon on vehicle card
+- **Delete Vehicle**: Click delete icon (confirmation required)
+- **Set Active**: Click "Set as Active Vehicle" button
+- **Pair Bluetooth**: In vehicle details, pair Bluetooth device
+
+**Data Tracked Per Vehicle**:
+- Make, Model, Year
+- Color, License Plate, VIN
+- Initial/Current Odometer
+- Total Miles Driven
+- Fuel Type
+- Paired Bluetooth Device
+
+### Automatic Trip Detection
+
+**Location**: Settings → Auto Detection
+
+**How It Works**:
+1. **Motion Sensor** detects acceleration
+2. **GPS** monitors speed and movement
+3. **Trip starts** when speed > threshold (5-15 mph based on sensitivity)
+4. **Trip ends** after stopped for configured time (1-15 minutes)
+
+**Configuration**:
+- **Sensitivity**: Low, Medium, High
+- **Stop Time**: 1-15 minutes before trip end
+- **Automatic Mode**: Start without gig app selection
+
+**Best Practices**:
+- Use **Medium** sensitivity for city driving
+- Use **Low** sensitivity for highway driving
+- Set **5 minutes** stop time to avoid false endings in traffic
+
+### Bluetooth Detection
+
+**Location**: Settings → Vehicles → [Vehicle] → Pair Bluetooth
+
+**Setup**:
+1. Enable Bluetooth on your phone
+2. Connect to car Bluetooth
+3. Open ControlMiles → Vehicles
+4. Select vehicle → "Pair Bluetooth Device"
+5. Choose your car from the list
+
+**Features**:
+- **Auto-Start**: Trip begins when connected
+- **Auto-Stop**: Trip ends when disconnected
+- **Background**: Works even when app is closed
+- **Multi-Vehicle**: Different devices for different cars
+
+---
+
+## 🗺️ Roadmap
+
+### Future Features
+
+- [ ] iOS Support
+- [ ] Cloud Backup (optional)
+- [ ] AI-powered route suggestions
+- [ ] Expense tracking
+- [ ] Team/Fleet management
+- [ ] Multi-language support
+- [ ] Dark mode
+- [ ] Widget for quick trip start
+
+---
+
+## 🔐 Security & Privacy
+
+- ✅ **All data stored locally** - No cloud servers
+- ✅ **SHA-256 hashing** - Data integrity verification
+- ✅ **No analytics** - Complete privacy
+- ✅ **No tracking** - Your data stays on your device
+- ✅ **Offline-first** - Internet not required
+- ✅ **GDPR compliant** - User owns all data
+
+---
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+**Issue**: Gradle sync failed  
+**Solution**: File → Invalidate Caches → Restart
+
+**Issue**: App not loading  
+**Solution**: Run `npm run build` before `npm run cap:sync`
+
+**Issue**: Permissions not working  
+**Solution**: Check `AndroidManifest.xml` and request at runtime
+
+**Issue**: GPS not accurate  
+**Solution**: Enable "High Accuracy" mode in Android location settings
+
+**Issue**: Bluetooth not detecting  
+**Solution**: Grant Bluetooth permission in Android Settings
+
+### Debug Tools
+
+- **Chrome DevTools**: `chrome://inspect` (for web debugging)
+- **Android Studio Logcat**: View native logs
+- **Console Logs**: Available in Chrome DevTools
+
+---
+
+## 📄 License
+
+**Proprietary License**  
+© 2025 Olympus Mont Systems LLC. All rights reserved.
+
+This software is proprietary and confidential. Unauthorized copying, distribution, or use is strictly prohibited.
+
+---
+
+## 📞 Support
+
+For support, please contact:  
+**Olympus Mont Systems LLC**
+
+---
+
+## ✅ Checklist Before Deployment
+
+- [ ] All features implemented
+- [ ] No mock data
+- [ ] All permissions configured
+- [ ] Signed APK generated
+- [ ] Tested on physical device
+- [ ] GPS tracking verified
+- [ ] Bluetooth detection tested
+- [ ] Motion sensors working
+- [ ] Camera functioning
+- [ ] Local storage persistent
+- [ ] IRS export format verified
+
+---
+
+**Built with ❤️ by Olympus Mont Systems LLC**
+
+*Professional mileage tracking for the modern gig economy driver*
