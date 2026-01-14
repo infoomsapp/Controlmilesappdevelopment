@@ -211,7 +211,7 @@ export function DayDetail({ ledger: initialLedger, onNavigate }: DayDetailProps)
                     <Input
                       value={correctionReason}
                       onChange={(e) => setCorrectionReason(e.target.value)}
-                      placeholder="Ej: Propina adicional"
+                      placeholder="e.g. Additional tip"
                     />
                   </div>
                   <div>

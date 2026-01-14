@@ -11,9 +11,11 @@ import { toast } from 'sonner';
 interface CameraCaptureProps {
   onCapture: (photoDataUrl: string, odometerReading: number) => void;
   onCancel?: () => void;
+  mode?: 'start' | 'end';
+  minimumReading?: number;
 }
 
-export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
+export function CameraCapture({ onCapture, onCancel, mode = 'start', minimumReading }: CameraCaptureProps) {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [odometerReading, setOdometerReading] = useState('');
@@ -45,7 +47,7 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
     } catch (error) {
       console.error('Error accessing camera:', error);
       setCameraError(true);
-      toast.error('No se pudo acceder a la cámara. Por favor, permite el acceso a la cámara.');
+      toast.error('Unable to access camera. Please allow camera access.');
     }
   }
 
@@ -79,18 +81,33 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
 
   function handleConfirm() {
     if (!capturedPhoto) {
-      toast.error('Debes tomar una foto del odómetro');
+      toast.error('You must take a photo of the odometer');
       return;
     }
 
     const reading = parseFloat(odometerReading);
     if (!reading || reading <= 0) {
-      toast.error('Ingresa una lectura v��lida del odómetro');
+      toast.error('Please enter a valid odometer reading');
+      return;
+    }
+
+    // Validate minimum reading for end mode
+    if (isEndMode && minimumReading && reading < minimumReading) {
+      toast.error(`Odometer reading must be greater than or equal to ${minimumReading.toFixed(1)}`);
       return;
     }
 
     onCapture(capturedPhoto, reading);
   }
+
+  const isEndMode = mode === 'end';
+  const title = isEndMode ? '📸 End of Shift Photo Required' : '📸 Start of Shift Photo Required';
+  const description = isEndMode 
+    ? 'Capture odometer reading at end of shift' 
+    : 'Capture odometer reading at start of shift';
+  const instruction = isEndMode
+    ? 'You must take a clear photo of your odometer using the camera to END YOUR SHIFT. This is mandatory legal evidence for IRS audits.'
+    : 'You must take a clear photo of your odometer using the camera BEFORE starting GPS tracking. This is mandatory legal evidence for IRS audits.';
 
   return (
     <div className="fixed inset-0 bg-black z-50 flex items-center justify-center p-4">
@@ -99,10 +116,10 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
           <CardHeader>
             <div className="flex items-start justify-between">
               <div>
-                <CardTitle className="text-xl">📸 Foto Inicial Obligatoria</CardTitle>
-                <CardDescription>Captura el odómetro al inicio de la jornada</CardDescription>
+                <CardTitle className="text-xl">{title}</CardTitle>
+                <CardDescription>{description}</CardDescription>
               </div>
-              {onCancel && (
+              {onCancel && !isEndMode && (
                 <Button variant="ghost" size="icon" onClick={onCancel}>
                   <X className="h-5 w-5" />
                 </Button>
@@ -111,12 +128,17 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Instructions */}
-            <Card className="bg-yellow-50 border-yellow-300">
+            <Card className={isEndMode ? "bg-red-50 border-red-300" : "bg-yellow-50 border-yellow-300"}>
               <CardContent className="pt-4 pb-4 flex gap-3">
-                <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                <div className="text-sm text-yellow-900">
-                  <p className="font-semibold mb-1">⚠️ Requisito de Auditoría del IRS</p>
-                  <p>Debes tomar una foto clara del odómetro usando la cámara ANTES de iniciar el rastreo GPS. Esta es evidencia legal obligatoria.</p>
+                <AlertCircle className={`h-5 w-5 ${isEndMode ? 'text-red-600' : 'text-yellow-600'} flex-shrink-0 mt-0.5`} />
+                <div className={`text-sm ${isEndMode ? 'text-red-900' : 'text-yellow-900'}`}>
+                  <p className="font-semibold mb-1">⚠️ IRS Audit Requirement</p>
+                  <p>{instruction}</p>
+                  {minimumReading && (
+                    <p className="mt-2 font-semibold">
+                      📊 Starting odometer: {minimumReading.toFixed(1)} miles
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -127,21 +149,21 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
                 <div className="absolute inset-0 flex items-center justify-center text-white text-center p-4">
                   <div>
                     <Camera className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                    <p className="mb-2">No se pudo acceder a la cámara</p>
-                    <p className="text-sm opacity-75">Por favor, permite el acceso a la cámara en la configuración del navegador</p>
+                    <p className="mb-2">Unable to access camera</p>
+                    <p className="text-sm opacity-75">Please allow camera access in your browser settings</p>
                     <Button
                       variant="secondary"
                       className="mt-4"
                       onClick={startCamera}
                     >
-                      Intentar de nuevo
+                      Try Again
                     </Button>
                   </div>
                 </div>
               ) : capturedPhoto ? (
                 <img
                   src={capturedPhoto}
-                  alt="Odómetro capturado"
+                  alt="Captured odometer"
                   className="w-full h-full object-contain"
                 />
               ) : (
@@ -157,7 +179,7 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
                     <div className="border-4 border-white/50 rounded-lg w-3/4 h-3/4" />
                   </div>
                   <div className="absolute bottom-4 left-0 right-0 text-center text-white text-sm bg-black/50 py-2">
-                    Alinea el odómetro dentro del marco
+                    Align the odometer within the frame
                   </div>
                 </>
               )}
@@ -174,7 +196,7 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
                 disabled={!stream}
               >
                 <Camera className="mr-2 h-5 w-5" />
-                Capturar Foto del Odómetro
+                Capture Odometer Photo
               </Button>
             )}
 
@@ -183,20 +205,20 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
               <>
                 <div className="space-y-2">
                   <Label htmlFor="odometer-reading" className="text-base">
-                    Lectura del Odómetro *
+                    Odometer Reading *
                   </Label>
                   <Input
                     id="odometer-reading"
                     type="number"
                     step="0.1"
-                    placeholder="Ej: 12345.6"
+                    placeholder="e.g. 12345.6"
                     value={odometerReading}
                     onChange={(e) => setOdometerReading(e.target.value)}
                     className="text-lg"
                     autoFocus
                   />
                   <p className="text-xs text-gray-500">
-                    Ingresa exactamente lo que se ve en la foto
+                    Enter exactly what you see in the photo
                   </p>
                 </div>
 
@@ -206,14 +228,14 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
                     onClick={retakePhoto}
                   >
                     <Camera className="mr-2 h-4 w-4" />
-                    Tomar de nuevo
+                    Retake Photo
                   </Button>
                   <Button
                     onClick={handleConfirm}
                     disabled={!odometerReading}
                   >
                     <Check className="mr-2 h-4 w-4" />
-                    Confirmar
+                    Confirm
                   </Button>
                 </div>
               </>
@@ -221,7 +243,7 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
 
             {/* Legal Notice */}
             <div className="text-xs text-gray-500 text-center pt-2 border-t">
-              🔒 La foto se almacena localmente y se incluirá en reportes de auditoría
+              🔒 Photo stored locally and included in audit reports
             </div>
           </CardContent>
         </Card>

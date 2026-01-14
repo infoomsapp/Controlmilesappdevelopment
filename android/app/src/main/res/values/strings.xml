@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ControlMiles</string>
+    <string name="title_activity_main">ControlMiles</string>
+    <string name="package_name">com.olympusmont.controlmiles</string>
+    <string name="custom_url_scheme">controlmiles</string>
+    
+    <!-- Permission rationales -->
+    <string name="location_permission_rationale">ControlMiles needs location access to automatically track your driving mileage for IRS compliance.</string>
+    <string name="camera_permission_rationale">ControlMiles needs camera access to capture odometer photos for audit evidence.</string>
+    <string name="bluetooth_permission_rationale">ControlMiles needs Bluetooth access to detect when you enter your vehicle and start automatic trip tracking.</string>
+    <string name="activity_recognition_rationale">ControlMiles needs activity recognition to detect when you start driving and automatically begin tracking trips.</string>
+    <string name="notification_permission_rationale">ControlMiles needs notification access to alert you when trips are detected and tracked.</string>
+</resources>

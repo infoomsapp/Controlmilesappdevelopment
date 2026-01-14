@@ -200,14 +200,14 @@ export function MileageCorrection({ ledger, onClose, onUpdate }: MilageCorrectio
                   id="adjustment"
                   type="number"
                   step="0.01"
-                  placeholder="Ej: +5.50 o -2.30"
+                  placeholder="e.g. +5.50 or -2.30"
                   value={adjustmentValue}
                   onChange={(e) => setAdjustmentValue(e.target.value)}
                   className="flex-1"
                 />
                 {adjustmentValue && !isNaN(parseFloat(adjustmentValue)) && (
                   <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded border">
-                    <span className="text-sm text-gray-600">Resultado:</span>
+                    <span className="text-sm text-gray-600">Result:</span>
                     <span className="font-bold text-blue-600">
                       {(currentDisplayedMiles + parseFloat(adjustmentValue)).toFixed(2)}
                     </span>
@@ -215,15 +215,15 @@ export function MileageCorrection({ ledger, onClose, onUpdate }: MilageCorrectio
                 )}
               </div>
               <p className="text-xs text-gray-500">
-                Ingresa un número positivo para agregar millas, o negativo para reducir
+                Enter a positive number to add miles, or negative to reduce
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="reason">Razón de la Corrección (Mínimo 10 caracteres)</Label>
+              <Label htmlFor="reason">Reason for Correction (Minimum 10 characters)</Label>
               <Textarea
                 id="reason"
-                placeholder="Ej: Error de GPS en túnel causó registro incorrecto de 3.2 millas. Corrección basada en ruta real verificada en Google Maps."
+                placeholder="e.g. GPS error in tunnel caused incorrect recording of 3.2 miles. Correction based on actual route verified in Google Maps."
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 rows={4}

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
-import { Play, Square, Camera, FileText, DollarSign, AlertCircle, CheckCircle, Edit3 } from 'lucide-react';
+import { Play, Square, Camera, FileText, DollarSign, AlertCircle, CheckCircle, Edit3, Moon } from 'lucide-react';
 import { DailyLedger, IRSLogEntry } from '@/app/types';
 import { getLedgerByDate, getLogsByLedgerId, saveLedger } from '@/app/services/storage';
 import { generateRecordHash } from '@/app/services/crypto';
@@ -41,10 +41,12 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [todayLedger, setTodayLedger] = useState<DailyLedger | null>(null);
   const [todayLogs, setTodayLogs] = useState<IRSLogEntry[]>([]);
   const [showCameraCapture, setShowCameraCapture] = useState(false);
+  const [showEndShiftCamera, setShowEndShiftCamera] = useState(false);
   const [showPermissionsDialog, setShowPermissionsDialog] = useState(false);
   const [showMileageCorrection, setShowMileageCorrection] = useState(false);
   const [selectedGigApp, setSelectedGigApp] = useState<GigApp | null>(getActiveGigApp());
   const [hasStartPhoto, setHasStartPhoto] = useState(false);
+  const [hasEndPhoto, setHasEndPhoto] = useState(false);
   const [hasPermissions, setHasPermissions] = useState(false);
 
   const { trackingState, startTracking, stopTracking } = useTracking(todayLedger?.id || '');
@@ -91,6 +93,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
     setTodayLedger(ledger);
     setHasStartPhoto(!!ledger.startPhotoPath);
+    setHasEndPhoto(!!ledger.endPhotoPath);
     const logs = getLogsByLedgerId(ledger.id);
     setTodayLogs(logs);
   }
@@ -120,6 +123,33 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     setShowCameraCapture(false);
     
     toast.success('✅ Initial odometer photo captured');
+  }
+
+  async function handleEndShiftCameraCapture(photoDataUrl: string, odometerReading: number) {
+    if (!todayLedger) return;
+
+    const hash = await generateRecordHash({
+      date: todayLedger.date,
+      odometerStart: todayLedger.odometerStart,
+      odometerEnd: odometerReading,
+      income: todayLedger.income,
+      timestamp: Date.now(),
+    });
+
+    const updated: DailyLedger = {
+      ...todayLedger,
+      odometerEnd: odometerReading,
+      endPhotoPath: photoDataUrl,
+      recordHash: hash,
+      timestamp: Date.now(),
+    };
+
+    saveLedger(updated);
+    setTodayLedger(updated);
+    setHasEndPhoto(true);
+    setShowEndShiftCamera(false);
+    
+    toast.success('✅ End of shift odometer photo captured');
   }
 
   function handleGigAppSelect(app: string) {
@@ -258,8 +288,26 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             </Card>
           )}
 
+          {/* Shift Completed Badge */}
+          {hasStartPhoto && hasEndPhoto && (
+            <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-300">
+              <CardContent className="pt-4 pb-4 flex items-center gap-3">
+                <CheckCircle className="h-8 w-8 text-green-600" />
+                <div className="flex-1">
+                  <p className="font-semibold text-green-900 text-lg">✅ Shift Completed</p>
+                  <p className="text-sm text-green-700">
+                    Both start and end odometer photos captured. Your shift is complete and IRS-compliant!
+                  </p>
+                  <div className="mt-2 text-xs text-green-600 font-mono">
+                    Start: {todayLedger?.odometerStart.toFixed(1)} mi → End: {todayLedger?.odometerEnd.toFixed(1)} mi
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Requirements to Start Tracking */}
-          {!trackingState.isTracking && (
+          {!trackingState.isTracking && !hasEndPhoto && (
             <Card className={!hasStartPhoto || !selectedGigApp ? 'border-yellow-300 bg-yellow-50' : 'border-green-300 bg-green-50'}>
               <CardHeader>
                 <CardTitle className="text-lg">Requirements to Start Tracking</CardTitle>
@@ -360,6 +408,18 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               </Button>
             )}
 
+            {/* End Shift Button - Only show if tracking is stopped and start photo exists */}
+            {!trackingState.isTracking && hasStartPhoto && !hasEndPhoto && totalMilesToday > 0 && (
+              <Button 
+                onClick={() => setShowEndShiftCamera(true)} 
+                size="lg" 
+                className="w-full col-span-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+              >
+                <Moon className="mr-2 h-5 w-5" />
+                End Shift (Required)
+              </Button>
+            )}
+
             <Button 
               onClick={() => todayLedger && setShowMileageCorrection(true)} 
               size="lg" 
@@ -387,6 +447,16 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             <CameraCapture 
               onCapture={handleCameraCapture} 
               onCancel={() => setShowCameraCapture(false)} 
+            />
+          )}
+
+          {/* End Shift Camera Capture */}
+          {showEndShiftCamera && todayLedger && (
+            <CameraCapture 
+              mode="end"
+              minimumReading={todayLedger.odometerStart}
+              onCapture={handleEndShiftCameraCapture} 
+              onCancel={() => setShowEndShiftCamera(false)} 
             />
           )}
 
